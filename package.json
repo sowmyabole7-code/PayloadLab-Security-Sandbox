@@ -4,9 +4,9 @@
   "description": "VaultMeter: Password Strength & Entropy Visualizer - Production-quality, privacy-first educational tool",
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js",
-    "serve": "node server.js",
+    "dev": "node dev-server.js",
+    "start": "node dev-server.js",
+    "serve": "node dev-server.js",
     "test": "node --test tests/entropy.test.js tests/patterns.test.js tests/generator.test.js tests/crackTime.test.js"
   },
   "keywords": [
