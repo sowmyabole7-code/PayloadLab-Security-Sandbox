@@ -1,22 +1,22 @@
 {
-  "name": "vaultmeter",
+  "name": "payloadlab",
   "version": "1.0.0",
-  "description": "VaultMeter: Password Strength & Entropy Visualizer - Production-quality, privacy-first educational tool",
+  "description": "Safe educational interface to test regular expressions and analyze inert sample payloads for common web vulnerabilities (XSS, SQL injection).",
   "type": "module",
   "scripts": {
     "dev": "node dev-server.js",
-    "start": "node dev-server.js",
-    "serve": "node dev-server.js",
-    "test": "node --test tests/entropy.test.js tests/patterns.test.js tests/generator.test.js tests/crackTime.test.js"
+    "build": "echo Static build ready"
   },
   "keywords": [
-    "password-strength",
-    "entropy-visualizer",
-    "k-anonymity",
-    "privacy-first",
-    "cryptography",
-    "zxcvbn"
+    "regex",
+    "cybersecurity",
+    "sandbox",
+    "xss",
+    "sqli",
+    "education",
+    "sanitization",
+    "defensive-security"
   ],
-  "author": "VaultMeter Team",
+  "author": "PayloadLab Team",
   "license": "MIT"
 }
