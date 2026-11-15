@@ -1,0 +1,573 @@
+/* ==========================================================================
+   PayloadLab Syntax, Highlight, and Feature View Specific Styling
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Regex Tester: Overlay Technique & Match Highlighting
+   -------------------------------------------------------------------------- */
+.regex-tester-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-5);
+}
+
+@media (max-width: 1024px) {
+  .regex-tester-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pattern-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  margin-bottom: var(--space-4);
+  transition: border-color var(--transition-fast);
+}
+
+.pattern-bar:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-subtle);
+}
+
+.pattern-delimiter {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-dim);
+  user-select: none;
+}
+
+.pattern-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  outline: none;
+}
+
+.flags-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.flag-toggle {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.flag-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.flag-toggle.active {
+  background-color: var(--color-secondary-subtle);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+/* Mirrored Overlay Container */
+.test-editor-container {
+  position: relative;
+  min-height: 180px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.test-editor-container:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-subtle);
+}
+
+.test-highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 14px;
+  color: transparent;
+  pointer-events: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: auto;
+  user-select: none;
+  z-index: 1;
+}
+
+.test-textarea {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  resize: vertical;
+  z-index: 2;
+  caret-color: var(--color-secondary);
+  outline: none;
+}
+
+/* Match span in highlight layer */
+.match-highlight {
+  background-color: var(--color-match-highlight);
+  border-bottom: 2px solid var(--color-match-border);
+  border-radius: 2px;
+  color: transparent;
+}
+
+.match-highlight-alt {
+  background-color: rgba(99, 102, 241, 0.35);
+  border-bottom: 2px solid var(--color-primary);
+  border-radius: 2px;
+  color: transparent;
+}
+
+/* Validity Banner */
+.validity-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  margin-bottom: var(--space-3);
+}
+
+.validity-valid {
+  background-color: var(--color-success-subtle);
+  color: var(--color-success);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.validity-invalid {
+  background-color: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.validity-timeout {
+  background-color: var(--color-warning-subtle);
+  color: var(--color-warning);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Match List */
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.match-item {
+  background-color: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.match-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+}
+
+.match-text-snippet {
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  background-color: var(--color-bg);
+  border-radius: 4px;
+  color: var(--color-secondary);
+  word-break: break-all;
+}
+
+.capture-groups-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.group-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  background-color: var(--color-bg);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.group-chip strong {
+  color: var(--color-primary);
+}
+
+/* Token Explainer breakdown */
+.token-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.token-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+.token-symbol {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  padding: 2px 6px;
+  background-color: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-secondary);
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: center;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.token-type {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.token-desc {
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   2. Payload Library Cards Grid
+   -------------------------------------------------------------------------- */
+.payload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 480px) {
+  .payload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.payload-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.payload-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.payload-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.payload-name {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.payload-danger-note {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  border-left: 2px solid var(--color-warning);
+  padding-left: var(--space-2);
+}
+
+.payload-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   3. Vulnerability Detector
+   -------------------------------------------------------------------------- */
+.detector-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-5);
+}
+
+@media (max-width: 960px) {
+  .detector-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rule-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  transition: all var(--transition-fast);
+}
+
+.rule-card-triggered {
+  border-left: 4px solid var(--color-danger);
+  background-color: rgba(248, 113, 113, 0.04);
+}
+
+.rule-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.rule-matches {
+  margin: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  word-break: break-all;
+}
+
+.remediation-box {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-success-subtle);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}
+
+.remediation-box strong {
+  color: var(--color-success);
+}
+
+/* --------------------------------------------------------------------------
+   4. Sanitizer Lab & Diff Viewer
+   -------------------------------------------------------------------------- */
+.pipeline-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.pipeline-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.pipeline-step-item.active {
+  border-color: var(--color-primary);
+}
+
+.pipeline-step-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.step-order-handle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step-order-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+}
+
+.step-order-btn:hover {
+  color: var(--color-text);
+}
+
+.diff-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .diff-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.diff-del {
+  background-color: var(--color-diff-del-bg);
+  color: var(--color-diff-del-text);
+  text-decoration: line-through;
+  border-radius: 2px;
+}
+
+.diff-ins {
+  background-color: var(--color-diff-ins-bg);
+  color: var(--color-diff-ins-text);
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+/* Concatenated vs Parameterized Query Demo */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comparison-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.comparison-card-vulnerable {
+  border-left: 4px solid var(--color-danger);
+}
+
+.comparison-card-secure {
+  border-left: 4px solid var(--color-success);
+}
+
+/* --------------------------------------------------------------------------
+   5. Learn Hub: Do / Don't Code Cards
+   -------------------------------------------------------------------------- */
+.dodont-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: var(--space-3) 0;
+}
+
+@media (max-width: 768px) {
+  .dodont-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dodont-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+.dodont-card-dont {
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.dodont-card-do {
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.dodont-header {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dodont-header-dont {
+  background-color: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.dodont-header-do {
+  background-color: var(--color-success-subtle);
+  color: var(--color-success);
+}

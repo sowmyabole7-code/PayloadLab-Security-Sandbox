@@ -1,0 +1,22 @@
+{
+  "name": "vaultmeter",
+  "version": "1.0.0",
+  "description": "VaultMeter: Password Strength & Entropy Visualizer - Production-quality, privacy-first educational tool",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "serve": "node server.js",
+    "test": "node --test tests/entropy.test.js tests/patterns.test.js tests/generator.test.js tests/crackTime.test.js"
+  },
+  "keywords": [
+    "password-strength",
+    "entropy-visualizer",
+    "k-anonymity",
+    "privacy-first",
+    "cryptography",
+    "zxcvbn"
+  ],
+  "author": "VaultMeter Team",
+  "license": "MIT"
+}

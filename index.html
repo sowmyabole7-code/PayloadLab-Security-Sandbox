@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PayloadLab: Safe educational sandbox to test regular expressions, analyze inert web vulnerability payloads (XSS, SQLi), inspect detection heuristics, and master defensive sanitization.">
+  <title>PayloadLab: Regex & Web Vulnerability Sandbox</title>
+
+  <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/syntax.css">
+</head>
+<body>
+
+  <!-- Persistent Safety Banner -->
+  <aside class="safety-banner" role="status" aria-label="Safety Notice">
+    <span class="shield-icon">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </span>
+    <span><strong>DEFENSIVE EDUCATIONAL SANDBOX:</strong> Payloads are displayed as inert text and never executed.</span>
+  </aside>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar" role="banner">
+    <a href="#" class="nav-brand" aria-label="PayloadLab Home">
+      <div class="nav-brand-logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
+      <div class="nav-brand-name">
+        <span>PayloadLab</span>
+      </div>
+      <span class="nav-brand-badge">SANDBOX</span>
+    </a>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist" aria-label="Sandbox Views">
+      <button class="tab-btn active" role="tab" aria-selected="true" data-tab="regex-tester" id="tab-btn-regex">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+        </svg>
+        <span>Regex Tester</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="payload-library" id="tab-btn-library">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span>Payload Library</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="detector" id="tab-btn-detector">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Detector</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="sanitizer-lab" id="tab-btn-sanitizer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        <span>Sanitizer Lab</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="learn" id="tab-btn-learn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span>Learn</span>
+      </button>
+    </nav>
+
+    <!-- Nav Actions -->
+    <div class="nav-actions">
+      <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
+        <!-- SVG will be injected by theme.js -->
+      </button>
+      <button id="app-reset-btn" class="btn btn-outline btn-sm" aria-label="Reset sandbox to defaults">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+        <span>Reset</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <section class="hero-header" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <div class="hero-title-group">
+        <h1 id="hero-title">
+          <span>PayloadLab</span>
+          <span style="font-size: 16px; font-weight: 500; color: var(--color-secondary); font-family: var(--font-mono);">// Security Sandbox</span>
+        </h1>
+        <p>A safe educational interface to test regular expressions, analyze inert vulnerability payloads (XSS, SQLi), inspect detection heuristics, and understand why parameterized queries and contextual encoding win over naive input filters.</p>
+      </div>
+      <div class="hero-quick-stats">
+        <div class="quick-stat">
+          <span class="quick-stat-val" id="stat-total-payloads">20+</span>
+          <span class="quick-stat-label">Inert Payloads</span>
+        </div>
+        <div class="quick-stat" style="border-left: 1px solid var(--color-border); padding-left: var(--space-4);">
+          <span class="quick-stat-val" id="stat-total-rules">16</span>
+          <span class="quick-stat-label">Heuristic Rules</span>
+        </div>
+        <div class="quick-stat" style="border-left: 1px solid var(--color-border); padding-left: var(--space-4);">
+          <span class="quick-stat-val" id="stat-total-sanitizers">6</span>
+          <span class="quick-stat-label">Defensive Steps</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="app-container" role="main">
+
+    <!-- ======================================================================
+         TAB 1: REGEX TESTER
+         ====================================================================== -->
+    <section id="tab-regex-tester" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-regex">
+      
+      <!-- Pattern Bar -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+        <div class="card-header" style="margin-bottom: var(--space-2);">
+          <span class="form-label">Regular Expression Pattern</span>
+          <div style="display: flex; gap: var(--space-2);">
+            <button id="regex-copy-pattern-btn" class="btn btn-outline btn-xs" title="Copy full regex with flags">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy Pattern</span>
+            </button>
+            <button id="regex-save-pattern-btn" class="btn btn-outline btn-xs" title="Bookmark pattern">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <span>Bookmark</span>
+            </button>
+            <button id="regex-cheatsheet-btn" class="btn btn-secondary btn-xs" title="Open regex token cheatsheet">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>Cheatsheet</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pattern-bar">
+          <span class="pattern-delimiter">/</span>
+          <input type="text" id="regex-pattern-input" class="pattern-input" placeholder="Type or paste regular expression..." spellcheck="false" autocomplete="off" aria-label="Regular expression pattern input">
+          <span class="pattern-delimiter">/</span>
+          <div class="flags-container" role="toolbar" aria-label="Regex Flags">
+            <button class="flag-toggle" data-flag="g" title="Global: Find all matches rather than stopping at first">g</button>
+            <button class="flag-toggle" data-flag="i" title="Case-Insensitive: Case-folding matching">i</button>
+            <button class="flag-toggle" data-flag="m" title="Multiline: ^ and $ match start and end of line">m</button>
+            <button class="flag-toggle" data-flag="s" title="DotAll: . matches newline characters as well">s</button>
+            <button class="flag-toggle" data-flag="u" title="Unicode: Treat pattern as sequence of Unicode code points">u</button>
+          </div>
+        </div>
+
+        <!-- Pattern Validity Status Indicator -->
+        <div id="regex-validity-status" class="validity-status validity-valid" role="status" aria-live="polite">
+          Valid Regular Expression
+        </div>
+      </div>
+
+      <!-- Main Tester Grid -->
+      <div class="regex-tester-grid">
+        <!-- Left: Test String Input with Mirrored Highlight Layer -->
+        <div class="card" style="display: flex; flex-direction: column;">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>Test Input String</span>
+            </span>
+            <span id="regex-match-summary" class="badge badge-category">Evaluating...</span>
+          </div>
+
+          <p class="card-subtitle" style="margin-bottom: var(--space-3);">
+            Live match highlighting using mirrored overlays (rendered safely via textContent spans). User input is never executed.
+          </p>
+
+          <div class="test-editor-container" style="flex: 1;">
+            <div id="regex-highlight-layer" class="test-highlight-layer" aria-hidden="true"></div>
+            <textarea id="regex-test-input" class="test-textarea" placeholder="Enter test string or pick inert payloads from the library..." spellcheck="false" aria-label="Regex test input string"></textarea>
+          </div>
+
+          <!-- Token Explainer Section -->
+          <div style="margin-top: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-3);">
+            <span class="form-label">Explain Pattern: Token Breakdown</span>
+            <div id="regex-explainer-tokens"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Match List & Saved History -->
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <!-- Match Inspector Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Match Inspector</span>
+              </span>
+            </div>
+            <div id="regex-match-list" class="match-list" aria-label="Extracted regex matches">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Bookmarked Patterns Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <span>Bookmarks</span>
+              </span>
+            </div>
+            <div id="regex-saved-list" style="display: flex; flex-direction: column; gap: 4px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- History Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Recent History</span>
+              </span>
+            </div>
+            <div id="regex-history-list" style="display: flex; flex-direction: column; gap: 4px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2: PAYLOAD LIBRARY
+         ====================================================================== -->
+    <section id="tab-payload-library" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-library" hidden>
+      <div class="card" style="margin-bottom: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3);">
+          <div>
+            <h2 class="card-title">Inert Payload Library</h2>
+            <p class="card-subtitle">Curated textbook vectors (XSS, SQLi) alongside harmless benign look-alikes to analyze false positive risks.</p>
+          </div>
+          <button id="add-custom-payload-btn" class="btn btn-primary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add Custom Payload</span>
+          </button>
+        </div>
+
+        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4); flex-wrap: wrap; align-items: center;">
+          <!-- Search Input -->
+          <div style="flex: 1; min-width: 240px; position: relative;">
+            <input type="text" id="payload-search-input" class="input-text" placeholder="Search payloads by name, text, or vector description..." aria-label="Search payloads">
+          </div>
+
+          <!-- Category Filter Chips -->
+          <div class="chip-group" role="radiogroup" aria-label="Filter payloads by category">
+            <button class="filter-chip active" data-category="all">All Payloads</button>
+            <button class="filter-chip" data-category="XSS">XSS</button>
+            <button class="filter-chip" data-category="SQLi">SQL Injection</button>
+            <button class="filter-chip" data-category="Benign">Benign (False Positives)</button>
+            <button class="filter-chip" data-category="Custom">Custom</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payload Cards Grid -->
+      <div id="payload-grid-container" class="payload-grid" aria-label="List of inert sample payloads">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 3: DETECTOR
+         ====================================================================== -->
+    <section id="tab-detector" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-detector" hidden>
+      
+      <!-- Top Alert: Detection Limits Callout -->
+      <div class="card" style="border-left: 4px solid var(--color-warning); margin-bottom: var(--space-4); padding: var(--space-4);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-3);">
+          <div style="color: var(--color-warning); flex-shrink: 0; margin-top: 2px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <strong style="color: var(--color-warning); font-size: 14px;">The Inherent Limit of Regex Detection</strong>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-top: 4px; line-height: 1.5;">
+              Regex pattern matching is helpful for preliminary heuristic telemetry and Web Application Firewall (WAF) rule sets, but <strong>input filters cannot guarantee security</strong>. Attackers continuously bypass regex through encoding mutations, nested tags, and character set permutations. The authentic, non-bypassable defenses are <strong>Contextual Output Encoding</strong> for HTML and <strong>Parameterized Queries (Prepared Statements)</strong> for SQL.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="detector-layout">
+        <!-- Left: Input & Triggered Rules -->
+        <div>
+          <!-- Candidate Input Card -->
+          <div class="card" style="margin-bottom: var(--space-4);">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                <span>Candidate Text to Analyze</span>
+              </span>
+              <div style="display: flex; gap: var(--space-2);">
+                <button id="detector-add-rule-btn" class="btn btn-outline btn-xs">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Add Rule</span>
+                </button>
+                <button id="detector-analyze-btn" class="btn btn-primary btn-xs">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Re-Analyze</span>
+                </button>
+              </div>
+            </div>
+            <textarea id="detector-input-textarea" class="textarea-input input-mono" rows="4" placeholder="Enter suspicious or sample string to test against the security detection rules..."></textarea>
+          </div>
+
+          <!-- Triggered Rules Section -->
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
+              <h3 class="card-title" style="font-size: 16px;">Triggered Heuristic Signatures</h3>
+              <span id="detector-triggered-count" class="badge badge-high">0 Triggered</span>
+            </div>
+            <div id="detector-triggered-list" aria-label="Triggered heuristic rules">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Risk Meter Gauge & Untriggered Rules -->
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <!-- Risk Gauge Card -->
+          <div class="card">
+            <span class="form-label" style="margin-bottom: var(--space-2); display: block;">Composite Risk Rating</span>
+            <div class="risk-meter-container">
+              <div class="risk-gauge" aria-hidden="true">
+                <svg class="risk-gauge-circle" viewBox="0 0 100 100">
+                  <circle class="risk-gauge-bg" cx="50" cy="50" r="38"></circle>
+                  <circle id="risk-gauge-bar" class="risk-gauge-bar" cx="50" cy="50" r="38" stroke="var(--color-success)" stroke-dasharray="238.76 238.76" stroke-dashoffset="238.76"></circle>
+                </svg>
+                <div class="risk-gauge-text">
+                  <div id="risk-gauge-score" class="risk-gauge-val">0</div>
+                  <div class="risk-gauge-label">Score</div>
+                </div>
+              </div>
+              <div class="risk-details">
+                <div class="risk-title-badge">
+                  <span id="risk-level-badge" class="badge badge-clean">Clean</span>
+                </div>
+                <p id="risk-summary-desc" class="risk-desc">No signatures triggered.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Untriggered / Inactive Rules Accordion -->
+          <div class="card" style="flex: 1;">
+            <div class="card-header" style="margin-bottom: var(--space-3);">
+              <span class="card-title" style="font-size: 14px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Inactive / Untriggered Rules</span>
+              </span>
+              <span id="detector-untriggered-count" class="badge badge-category">16 Clean</span>
+            </div>
+            <p class="card-subtitle" style="margin-bottom: var(--space-3);">Toggle checkboxes to enable or disable specific heuristic rules during evaluation.</p>
+            <div id="detector-untriggered-list" style="max-height: 380px; overflow-y: auto;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 4: SANITIZER LAB
+         ====================================================================== -->
+    <section id="tab-sanitizer-lab" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-sanitizer" hidden>
+      
+      <!-- Top Alert for Naive SQL Meta Strip -->
+      <div id="sanitizer-warning-banner" style="display: none; margin-bottom: var(--space-4);"></div>
+
+      <!-- Pipeline Configuration Card -->
+      <div class="card" style="margin-bottom: var(--space-4);">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Sanitization Pipeline Configuration</h2>
+            <p class="card-subtitle">Toggle defensive filters and reorder steps using the arrows to observe how order of operations impacts payload safety.</p>
+          </div>
+          <div style="display: flex; gap: var(--space-2);">
+            <button id="sanitizer-reset-pipeline-btn" class="btn btn-outline btn-xs">Reset Pipeline</button>
+            <button id="sanitizer-copy-output-btn" class="btn btn-secondary btn-xs">Copy Output</button>
+          </div>
+        </div>
+
+        <!-- Pipeline Steps List -->
+        <div id="pipeline-steps-container" class="pipeline-step-list">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Raw Input Textarea -->
+        <div class="form-group" style="margin-top: var(--space-4);">
+          <label for="sanitizer-input-textarea" class="form-label">Input String to Sanitize</label>
+          <textarea id="sanitizer-input-textarea" class="textarea-input input-mono" rows="3" placeholder="Enter raw string to sanitize..."></textarea>
+        </div>
+      </div>
+
+      <!-- Before / After Side-by-Side Character Diff -->
+      <div class="diff-container">
+        <!-- Before View -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" style="font-size: 14px;">Original Input (Before)</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 11px; color: var(--color-text-dim);">Risk:</span>
+              <span id="risk-before-badge" class="badge badge-high">High Risk</span>
+            </div>
+          </div>
+          <div id="diff-before-view" class="code-block" style="min-height: 120px;" aria-label="Original input with deleted characters highlighted"></div>
+        </div>
+
+        <!-- After View -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" style="font-size: 14px;">Sanitized Output (After)</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 11px; color: var(--color-text-dim);">Risk:</span>
+              <span id="risk-after-badge" class="badge badge-clean">Clean</span>
+            </div>
+          </div>
+          <div id="diff-after-view" class="code-block" style="min-height: 120px;" aria-label="Sanitized output with inserted characters highlighted"></div>
+        </div>
+      </div>
+
+      <!-- Static Mini-Illustration: Concatenated vs Parameterized Query -->
+      <div class="card" style="margin-top: var(--space-6);">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Interactive Comparison: Concatenation vs Parameterization</h3>
+            <p class="card-subtitle">See why sanitizing or escaping SQL strings is inferior to parameterized queries.</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--space-3);">
+          <label for="demo-query-username-input" class="form-label">Try changing user input:</label>
+          <input type="text" id="demo-query-username-input" class="input-text input-mono" value="admin' OR '1'='1" style="max-width: 480px;">
+        </div>
+
+        <div class="comparison-grid">
+          <!-- Vulnerable Concatenation -->
+          <div class="comparison-card comparison-card-vulnerable">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <strong style="color: var(--color-danger); font-size: 14px;">Vulnerable: Dynamic String Concatenation</strong>
+              <span class="badge badge-critical">Flawed</span>
+            </div>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px;">
+              User input modifies the SQL syntax tree directly, adding an unauthorized OR clause that bypasses authentication:
+            </p>
+            <div id="demo-concat-query-output" class="code-block" style="color: var(--color-danger);"></div>
+          </div>
+
+          <!-- Secure Parameterization -->
+          <div class="comparison-card comparison-card-secure">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <strong style="color: var(--color-success); font-size: 14px;">Secure: Parameterized Query (Prepared Statement)</strong>
+              <span class="badge badge-clean">Bulletproof</span>
+            </div>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px;">
+              SQL syntax is pre-compiled. The input is treated strictly as an inert literal string value:
+            </p>
+            <div id="demo-param-query-output" class="code-block" style="color: var(--color-success); margin-bottom: 4px;"></div>
+            <div id="demo-param-bindings-output" style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-dim);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bypass Awareness Conceptual Tips -->
+      <div class="card" style="margin-top: var(--space-4);">
+        <h3 class="card-title" style="margin-bottom: var(--space-2);">Bypass Awareness: Why Naive Filters Fail</h3>
+        <p class="card-subtitle" style="margin-bottom: var(--space-4);">Common ways attackers bypass ad-hoc regex filters in web applications:</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3);">
+          <div class="card" style="background-color: var(--color-bg); padding: 12px;">
+            <strong style="color: var(--color-secondary); font-size: 13px;">1. Nested Tag Stripping</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">A filter that deletes <code>&lt;script&gt;</code> once will turn <code>&lt;scr&lt;script&gt;ipt&gt;</code> right back into an active <code>&lt;script&gt;</code> tag after execution.</p>
+          </div>
+          <div class="card" style="background-color: var(--color-bg); padding: 12px;">
+            <strong style="color: var(--color-secondary); font-size: 13px;">2. Multi-Decode Pitfalls</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">If an application sanitizes before URL-decoding, double-encoded payloads like <code>%253Cscript%253E</code> bypass the filter and execute upon decode.</p>
+          </div>
+          <div class="card" style="background-color: var(--color-bg); padding: 12px;">
+            <strong style="color: var(--color-secondary); font-size: 13px;">3. Non-Whitespace Delimiters</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">In SQL, comments like <code>/**/</code> or line breaks can replace spaces, dodging regexes written as <code>\s+OR\s+</code>.</p>
+          </div>
+          <div class="card" style="background-color: var(--color-bg); padding: 12px;">
+            <strong style="color: var(--color-secondary); font-size: 13px;">4. Case & Encoding Mutations</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">HTML browsers tolerate mixed case (<code>&lt;sCrIpt&gt;</code>), missing quotes, and null-bytes that simple patterns overlook.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 5: LEARN HUB
+         ====================================================================== -->
+    <section id="tab-learn" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-learn" hidden>
+      <div class="card" style="margin-bottom: var(--space-4);">
+        <h2 class="card-title">Security & Regex Knowledge Hub</h2>
+        <p class="card-subtitle">Comprehensive guides to common web vulnerabilities, contextual defenses, and regular expression mechanics with interactive Do / Don't comparisons.</p>
+      </div>
+
+      <div id="learn-cards-container" aria-label="Educational vulnerability modules">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Cheatsheet Drawer -->
+  <div id="cheatsheet-backdrop" class="drawer-backdrop" role="dialog" aria-modal="true" aria-labelledby="cheatsheet-title">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <h3 id="cheatsheet-title" class="card-title" style="font-size: 15px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Regex Token Cheatsheet</span>
+        </h3>
+        <button id="cheatsheet-close-btn" class="icon-btn" aria-label="Close cheatsheet drawer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="cheatsheet-body" class="drawer-body">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Payload Modal -->
+  <div id="custom-payload-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="custom-payload-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="custom-payload-title" class="modal-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add Custom Sample String</span>
+        </h3>
+        <button id="custom-payload-close-btn" class="icon-btn" aria-label="Close modal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="custom-payload-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="custom-payload-name" class="form-label">Payload Name</label>
+            <input type="text" id="custom-payload-name" class="input-text" placeholder="e.g. My Custom XSS Vector" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+            <div class="form-group">
+              <label for="custom-payload-category" class="form-label">Category</label>
+              <select id="custom-payload-category" class="input-text">
+                <option value="XSS">XSS</option>
+                <option value="SQLi">SQL Injection</option>
+                <option value="Benign">Benign / False Positive</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="custom-payload-severity" class="form-label">Severity</label>
+              <select id="custom-payload-severity" class="input-text">
+                <option value="Critical">Critical</option>
+                <option value="High" selected>High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+                <option value="Benign">Benign</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="custom-payload-text" class="form-label">Inert Sample String</label>
+            <textarea id="custom-payload-text" class="textarea-input input-mono" rows="3" placeholder="Enter sample string..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="custom-payload-desc" class="form-label">Educational Note / Description</label>
+            <textarea id="custom-payload-desc" class="textarea-input" rows="2" placeholder="Why is this interesting or dangerous?"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="custom-payload-cancel-btn" class="btn btn-outline btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save to Library</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Rule Modal -->
+  <div id="custom-rule-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="custom-rule-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="custom-rule-title" class="modal-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Register Custom Detection Rule</span>
+        </h3>
+        <button id="custom-rule-close-btn" class="icon-btn" aria-label="Close modal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="custom-rule-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="custom-rule-name" class="form-label">Rule Name</label>
+            <input type="text" id="custom-rule-name" class="input-text" placeholder="e.g. Detect Custom Script Variant" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+            <div class="form-group">
+              <label for="custom-rule-category" class="form-label">Category</label>
+              <select id="custom-rule-category" class="input-text">
+                <option value="XSS">XSS</option>
+                <option value="SQLi">SQL Injection</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="custom-rule-severity" class="form-label">Severity</label>
+              <select id="custom-rule-severity" class="input-text">
+                <option value="Critical">Critical</option>
+                <option value="High" selected>High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="custom-rule-regex" class="form-label">Regular Expression Pattern</label>
+            <input type="text" id="custom-rule-regex" class="input-text input-mono" placeholder="e.g. <\s*applet[^>]*>" required>
+          </div>
+          <div class="form-group">
+            <label for="custom-rule-flags" class="form-label">Flags</label>
+            <input type="text" id="custom-rule-flags" class="input-text input-mono" value="i" placeholder="e.g. i or m">
+          </div>
+          <div class="form-group">
+            <label for="custom-rule-desc" class="form-label">Vulnerability Description</label>
+            <textarea id="custom-rule-desc" class="textarea-input" rows="2" placeholder="What does this rule detect?"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="custom-rule-remediation" class="form-label">Secure Remediation</label>
+            <textarea id="custom-rule-remediation" class="textarea-input" rows="2" placeholder="How should developers securely remediate this?"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="custom-rule-cancel-btn" class="btn btn-outline btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Rule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" role="region" aria-live="polite" aria-label="Notifications"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer" role="contentinfo">
+    <div>
+      <strong>PayloadLab: Regex & Web Vulnerability Sandbox</strong> &mdash; Built for safe security education and defense.
+    </div>
+    <div style="display: flex; gap: var(--space-4);">
+      <span>WCAG AA Compliant</span>
+      <span>No Remote Execution</span>
+      <span>ReDoS Watchdog Protected</span>
+    </div>
+  </footer>
+
+  <!-- Application Bootstrap -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
